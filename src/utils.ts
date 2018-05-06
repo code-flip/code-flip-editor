@@ -10,4 +10,12 @@ class Rectangle {
     this.height = height;
   }
 }
-export {Rectangle};
+class Vector {
+  y: number;
+  x: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+}
+export {Rectangle, Vector};
