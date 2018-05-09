@@ -3,6 +3,8 @@ import { CodeFlip } from "./codeFlip";
 import { Rectangle } from "./utils";
 import { BlockSVG } from "./block";
 import { InputSVG } from "./input";
+import { InputStack } from "./stackInput";
+import { InputLabel } from "./labelInput";
 
 class Toolbox implements Renderable {
   editor: CodeFlip;
@@ -39,37 +41,57 @@ class Toolbox implements Renderable {
     this.group.appendChild(this.background);
     this.editor = editor;
     this.bBox = new Rectangle(0, 0, 500, 10);
-    for (var i = 0; i < 10; i++) {
-      this.blocks.push(new BlockSVG());
-      var hue = Math.random() * 360;
-      this.blocks[this.blocks.length - 1].color = "hsl(" + hue + ", 100%, 40%)";
-      if (Math.random() < 0.5) {
-        var b = this.blocks[this.blocks.length - 1];
-        b.canHaveNext = true;
-        b.canHavePrevious = true;
-        b.next = new BlockSVG();
-        b.next.canHaveNext = true;
-        b.next.canHavePrevious = true;
-        var hue2 = Math.random() * 360;
-        b.next.color = "hsl(" + hue2 + ", 100%, 40%)";
-      }
-      var k = Math.random() * 4 - 1;
-      var b = this.blocks[this.blocks.length - 1];
-      for (var j = 0; j < k; j++) {
-        b.inputList[j] = [];
-        var m = b.inputList[j];
-        var b = this.blocks[this.blocks.length - 1];
-        var h = Math.random() * 4 - 1;
-        for (var l = 0; l < h; l++) {
-          var g = new InputSVG();
-          var hue2 = Math.random() * 360;
-          g.color = b.color;// "hsl(" + hue2 + ", 100%, 50%)";
-          b.inputList[j][l] = g;
-        }
-      }
+    for (var i = 0; i < 4; i++) {
+      this.blocks.push(randBlock(4));
     }
   }
   //this.bBox=new Rectangle(200,0,500,500);
+}
+var cp: number[] = [];
+for (var i = 0; i < 12; i++) {
+  cp.push(360 / 12 * i);
+}
+function randBlock(iterations: number): BlockSVG {
+  var kwlist = ['False', 'None', 'True', 'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'];
+  var b = new BlockSVG();
+  var hue = cp[Math.floor(Math.random() * cp.length)];
+  b.color = "hsl(" + hue + ", 100%, 40%)";
+  if (!(iterations > 0)) {
+    return b;
+  }
+  if (Math.random() < 0.5) {
+    b.canHaveNext = true;
+    b.canHavePrevious = true;
+    b.next = new BlockSVG();
+    b.next.canHaveNext = true;
+    b.next.canHavePrevious = true;
+    var hue2 = cp[Math.floor(Math.random() * cp.length)];
+    b.next.color = "hsl(" + hue2 + ", 100%, 40%)";
+  }
+  var k = Math.random() * 4 - 1;
+  for (var j = 0; j < k; j++) {
+    b.inputList[j] = [];
+    var m = b.inputList[j];
+    var h = Math.random() * 5;
+    if (Math.random() > 0.5 || j !== 1) {
+      for (var l = 0; l < h; l++) {
+        var mg = new InputLabel();
+        mg.text = kwlist[Math.floor(Math.random() * kwlist.length)];//[1, 1, 1, 1, 1, 1, 1, 1].map(x => String.fromCharCode(Math.floor(Math.random() * 26) + 65)).join("");
+        var g = Math.random() > 0.5 ? new InputSVG() : mg;
+        var hue2 = cp[Math.floor(Math.random() * cp.length)];
+        g.color = b.color;// "hsl(" + hue2 + ", 100%, 50%)";
+        b.inputList[j][l] = g;
+      }
+    } else {
+      var g2 = new InputStack();
+      var hue2 = cp[Math.floor(Math.random() * cp.length)];
+      g2.setBlock(randBlock(iterations - 1));
+      g2.stack.canHavePrevious = true;
+      g2.color = b.color;// "hsl(" + hue2 + ", 100%, 50%)";
+      b.inputList[j][0] = g2;
+    }
+  }
+  return b;
 }
 
 export { Toolbox };

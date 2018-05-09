@@ -15,7 +15,9 @@ class InputSVG implements Renderable {
   layoutChildren(): void {
 
   }
-
+  height(): number {
+    return this.group.getBBox().height;
+  }
   render(parent: SVGGElement | SVGElement): void {
     this.layoutChildren();
     if (this.group.parentNode !== parent) {
@@ -23,7 +25,7 @@ class InputSVG implements Renderable {
     }
 
     this.bBox = new Rectangle(this.position.x, this.position.y, this.width, 24);
-    var bshape = new RectBlockShape(this.bBox.width, this.bBox.height, 12, false, false);
+    var bshape = new RectBlockShape(this.bBox.width, this.bBox.height, 0, false, false);
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.shape.setAttribute("fill", this.color);
