@@ -5,6 +5,8 @@ import { BlockSVG } from "./block";
 import { InputSVG } from "./input";
 import { InputStack } from "./stackInput";
 import { InputLabel } from "./labelInput";
+import { Horrible } from "./horrible";
+import { InputBlock } from "./blockInput";
 
 class Toolbox implements Renderable {
   editor: CodeFlip;
@@ -16,7 +18,7 @@ class Toolbox implements Renderable {
     if (this.group.parentNode !== parent) {
       parent.appendChild(this.group);
     }
-    this.bBox = new Rectangle(0, 0, 400, this.editor.container.clientHeight);
+    this.bBox = new Rectangle(0, 0, 1000, this.editor.container.clientHeight);
     this.background.setAttribute("width", this.bBox.width + "px");
     this.background.setAttribute("height", this.bBox.height + "px");
     this.group.setAttribute("transform", "translate(" + this.bBox.x + " " + this.bBox.y + ")");
@@ -77,7 +79,13 @@ function randBlock(iterations: number): BlockSVG {
       for (var l = 0; l < h; l++) {
         var mg = new InputLabel();
         mg.text = kwlist[Math.floor(Math.random() * kwlist.length)];//[1, 1, 1, 1, 1, 1, 1, 1].map(x => String.fromCharCode(Math.floor(Math.random() * 26) + 65)).join("");
-        var g = Math.random() > 0.5 ? new InputSVG() : mg;
+        var q = Math.random() > 0.5;
+        var g = q ? new InputBlock() : mg;
+        if (q) {
+          var g3 = new InputBlock();
+          g3.setBlock(randBlock(iterations - 2));
+          g = g3;
+        }
         var hue2 = cp[Math.floor(Math.random() * cp.length)];
         g.color = b.color;// "hsl(" + hue2 + ", 100%, 50%)";
         b.inputList[j][l] = g;

@@ -265,7 +265,7 @@ class BlockSVG implements Renderable {
       nStack = false;
       for (var j = 0; j < row.length; j++) {
 
-        if ((<any>row[j]).stack) {
+        if ((<any>row[j]).stack && row[j].type=="InputStack") {
           lowX = 24;
           cx = Math.max(cx, lowX);
           row[j].render(this.group);

@@ -3,15 +3,15 @@ import { Rectangle, Vector } from "./utils";
 import { RectBlockShape, BlockSVG } from "./block";
 import { InputSVG } from "./input";
 
-class InputStack extends InputSVG {
+class InputBlock extends InputSVG {
   group: SVGGElement;
   bBox: Rectangle;
   shape: SVGPathElement;
   stack: BlockSVG;
+  type: string = "InputBlock";
   position: Vector = new Vector(0, 0);
   color: string = "hsl(0, 100%, 50%)";
   width: number = 48;
-  type: string = "InputStack";
   toCode(): string {
     return "undefined";
   }
@@ -45,21 +45,21 @@ class InputStack extends InputSVG {
     }
 
 
-    var bshape = new RectBlockShape(this.bBox.width, this.bBox.height, 12, false, false);
+    var bshape = new RectBlockShape(this.bBox.width, this.bBox.height, 0, false, false);
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.group.setAttribute("id", "stack-man");
-    this.shape.setAttribute("fill", "transparent");//this.color);
+    this.shape.setAttribute("fill", this.color);
     if (this.stack) {
       this.stack.render(this.group);
     }
   }
   constructor() {
     super();
-    this.stack = new BlockSVG();
-    this.stack.canHaveNext = true;
-    this.stack.canHavePrevious = true;
+    this.stack = undefined;
+    //this.stack.canHaveNext = true;
+    //this.stack.canHavePrevious = true;
 
   }
 }
-export { InputStack };
+export { InputBlock };

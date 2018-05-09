@@ -9,6 +9,7 @@ class InputSVG implements Renderable {
   position: Vector = new Vector(0, 0);
   color: string = "hsl(0, 100%, 50%)";
   width: number = 48;
+  type: string = "InputSVG";
   toCode(): string {
     return "undefined";
   }
