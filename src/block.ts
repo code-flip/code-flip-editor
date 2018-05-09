@@ -260,19 +260,21 @@ class BlockSVG implements Renderable {
       }
       data[i] = { prev: stack && true && nStack, next: false };
       var cx = 10;
-      var height = 12;
+      var minHeight = 12;
+      var height = minHeight + 0;
       stack = false;
       nStack = false;
       for (var j = 0; j < row.length; j++) {
 
-        if ((<any>row[j]).stack && row[j].type=="InputStack") {
-          lowX = 24;
+        if (row[j].type == "InputStack") {
+          lowX = 48;
           cx = Math.max(cx, lowX);
           row[j].render(this.group);
           var bb = row[j].group.getBBox();
           bb.height = row[j].height();
           row[j].position.x = cx;
           row[j].position.y = cy - 10;
+          row[j].render(this.group);
           //cx += bb.width + 10;
           height = Math.max(height, bb.height - 20);
           stack = true;
@@ -283,7 +285,7 @@ class BlockSVG implements Renderable {
           if (i === this.inputList.length - 1) {
             widths[i - 1] = Math.max(widths[i - 1], 128);
           }
-          if (((row[j] as InputStack).stack as BlockSVG).lastBlock().canHaveNext) {
+          if (!((row[j] as InputStack).stack) || ((row[j] as InputStack).stack as BlockSVG).lastBlock().canHaveNext) {
             nStack = true;
             data[i].next = true;
           }
@@ -298,6 +300,13 @@ class BlockSVG implements Renderable {
           height = Math.max(height, bb.height);
         }
         //row[j].render(this.group);
+      }
+      for (var j = 0; j < row.length; j++) {
+
+        if (row[j].type != "InputStack") {
+          row[j].position.y = cy - row[j].height() / 2 + height / 2;
+          row[j].render(this.group);
+        }
       }
 
       heights.push(height);

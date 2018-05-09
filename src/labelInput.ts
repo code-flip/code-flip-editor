@@ -37,13 +37,14 @@ class InputLabel extends InputSVG {
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.group.setAttribute("id", "stack-man");
     this.label.innerHTML = this.text;
-    this.shape.setAttribute("fill", "transparent");//this.color);
+    this.shape.setAttribute("fill", "transparent");
   }
-  constructor() {
+  constructor(text?: string) {
     super();
+    this.text = text || "";
     this.label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    this.label.setAttribute("fill", "white");//this.color);
-    this.label.setAttribute("y", "4");//this.color);
+    this.label.setAttribute("fill", "white");
+    this.label.setAttribute("y", "2");
     this.label.setAttribute("style", "alignment-baseline: hanging;font-family:monospace;font-size:16px;");
 
 

@@ -54,9 +54,12 @@ class InputBlock extends InputSVG {
       this.stack.render(this.group);
     }
   }
-  constructor() {
+  constructor(stack?:BlockSVG,color?:string) {
     super();
-    this.stack = undefined;
+    this.stack = stack;
+    if(color){
+      this.color=color;
+    }
     //this.stack.canHaveNext = true;
     //this.stack.canHavePrevious = true;
 

@@ -54,11 +54,11 @@ class InputStack extends InputSVG {
       this.stack.render(this.group);
     }
   }
-  constructor() {
+  constructor(stack?:BlockSVG) {
     super();
-    this.stack = new BlockSVG();
-    this.stack.canHaveNext = true;
-    this.stack.canHavePrevious = true;
+    this.stack = stack;
+    //this.stack.canHaveNext = true;
+    //this.stack.canHavePrevious = true;
 
   }
 }

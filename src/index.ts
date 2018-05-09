@@ -1,7 +1,11 @@
 import {CodeFlip} from "./codeFlip";
+import { Language } from "./language";
+import { LanguagePython } from "./python/LanguagePython";
 var editorElement:HTMLDivElement=document.createElement("div");
 document.body.appendChild(editorElement);
 (<any>window).editorElement=editorElement;
 var editor:CodeFlip=new CodeFlip(editorElement);
+var lang:Language=new LanguagePython();
+editor.toolbox.addBlocksForLanguage(lang);
 (<any>window).editor=editor;
 editor.render();

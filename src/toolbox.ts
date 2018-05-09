@@ -7,6 +7,7 @@ import { InputStack } from "./stackInput";
 import { InputLabel } from "./labelInput";
 import { Horrible } from "./horrible";
 import { InputBlock } from "./blockInput";
+import { Language } from "./language";
 
 class Toolbox implements Renderable {
   editor: CodeFlip;
@@ -18,7 +19,7 @@ class Toolbox implements Renderable {
     if (this.group.parentNode !== parent) {
       parent.appendChild(this.group);
     }
-    this.bBox = new Rectangle(0, 0, 1000, this.editor.container.clientHeight);
+    this.bBox = new Rectangle(0, 0, 300, this.editor.container.clientHeight);
     this.background.setAttribute("width", this.bBox.width + "px");
     this.background.setAttribute("height", this.bBox.height + "px");
     this.group.setAttribute("transform", "translate(" + this.bBox.x + " " + this.bBox.y + ")");
@@ -43,9 +44,12 @@ class Toolbox implements Renderable {
     this.group.appendChild(this.background);
     this.editor = editor;
     this.bBox = new Rectangle(0, 0, 500, 10);
-    for (var i = 0; i < 4; i++) {
+    /*for (var i = 0; i < 4; i++) {
       this.blocks.push(randBlock(4));
-    }
+    }*/
+  }
+  addBlocksForLanguage(lang:Language):void{
+    this.blocks=this.blocks.concat(lang.getBlocks());
   }
   //this.bBox=new Rectangle(200,0,500,500);
 }
