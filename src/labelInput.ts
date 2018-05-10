@@ -32,7 +32,7 @@ class InputLabel extends InputSVG {
 
 
 
-    var bshape = new SquareBlockShape({ heights: [this.bBox.height-20], tHeight: this.bBox.height, widths: [this.bBox.width], mWidth: this.bBox.width, data: [{prev:false,next:false}] },0,false,false);
+    var bshape = new SquareBlockShape({ heights: [this.bBox.height - 20], tHeight: this.bBox.height, widths: [this.bBox.width], mWidth: this.bBox.width, data: [{ prev: false, next: false }] }, 0, false, false);
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.group.setAttribute("id", "stack-man");
@@ -45,7 +45,7 @@ class InputLabel extends InputSVG {
     this.label = document.createElementNS("http://www.w3.org/2000/svg", "text");
     this.label.setAttribute("fill", "white");
     this.label.setAttribute("y", "2");
-    this.label.setAttribute("style", "alignment-baseline: hanging;font-family:monospace;font-size:16px;");
+    this.label.setAttribute("style", "alignment-baseline: hanging;font-family:monospace;font-size:16px;user-select:none;");
 
 
   }

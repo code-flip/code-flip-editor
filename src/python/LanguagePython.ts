@@ -19,10 +19,11 @@ class LanguagePython implements Language {
     b.color = "hsl(180, 100%, 40%)";
     b.canHaveNext = true;
     b.canHavePrevious = true;
-    b.inputList = [[new InputLabel("if ("), new InputBlock(this.blockFalse(), b.color), new InputLabel("):")],
-    [new InputStack()],
-    [new InputLabel("else:")],
-    [new InputStack()]
+    b.inputList = [
+      [new InputLabel("if ("), new InputBlock(this.blockFalse(), b.color), new InputLabel("):")],
+      [new InputStack()],
+      [new InputLabel("else:")],
+      [new InputStack()]
     ];
     return b;
   }
@@ -93,7 +94,8 @@ class LanguagePython implements Language {
     blocks.push(this.blockMathMultiply());
     blocks.push(this.blockMathDivide());
     blocks.push(this.blockMathSubtract());
-    blocks.push(this.blockIf(this.blockTrue(),this.blockPrint(this.blockFalse())));
+    //blocks.push(this.blockIf(this.blockTrue(), this.blockPrint(this.blockFalse())));
+    blocks.push(this.blockIf(this.blockTrue(), this.blockPrint(this.blockFalse()).append(this.blockPrint(this.blockTrue()))));
     return blocks;
   }
   codeToBlock(str: string): BlockSVG {

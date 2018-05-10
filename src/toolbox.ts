@@ -26,8 +26,10 @@ class Toolbox implements Renderable {
     var cx = 10;
     var cy = 10;
     for (var i = 0; i < this.blocks.length; i++) {
-      this.blocks[i].position.x = cx;
-      this.blocks[i].position.y = cy;
+      if (this.blocks[i].group.parentNode !== this.group) {
+        this.blocks[i].position.x = cx;
+        this.blocks[i].position.y = cy;
+      }
       this.blocks[i].render(this.group);
       cy += this.blocks[i].group.getBBox().height + 10;
     }
@@ -48,8 +50,8 @@ class Toolbox implements Renderable {
       this.blocks.push(randBlock(4));
     }*/
   }
-  addBlocksForLanguage(lang:Language):void{
-    this.blocks=this.blocks.concat(lang.getBlocks());
+  addBlocksForLanguage(lang: Language): void {
+    this.blocks = this.blocks.concat(lang.getBlocks());
   }
   //this.bBox=new Rectangle(200,0,500,500);
 }

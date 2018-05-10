@@ -124,6 +124,8 @@ class BlockSVG implements Renderable {
       var oldStack = this._previous;
       oldStack.next = undefined;
       this._previous = block;
+    } else {
+      this._previous = block;
     }
     if (this._previous) {
       if (this._previous.next != this) {
@@ -145,6 +147,8 @@ class BlockSVG implements Renderable {
       if (oldStack.group.parentNode == this.group) {
         this.group.removeChild(oldStack.group);
       }
+    } else {
+      this._next = block;
     }
     if (this._next) {
       if (this._next.previous != this) {
@@ -248,6 +252,10 @@ class BlockSVG implements Renderable {
       this.next.render(this.group);
     }
   }
+  append(block: BlockSVG): BlockSVG {
+    this.next = block;
+    return this;
+  }
   render(parent: SVGGElement | SVGElement): void {
     var layout = this.layoutChildren();
     if (this.group.parentNode !== parent) {
@@ -269,6 +277,36 @@ class BlockSVG implements Renderable {
     //this.shape.setAttribute("fill", "hsl("+hue+", 70%, 50%)");
     this.shape.setAttribute("filter", "url(#Bevel)");
     this.group.appendChild(this.shape);
+    var me = this;
+
+    var f = function(event: any, ui?: any): any {
+      //console.log("MD",me);
+      var startMPos = new Vector(event.clientX, event.clientY);
+      var startPos = new Vector(me.position.x + 0, me.position.y + 0);
+      var f2 = function(event: any, ui?: any): any {
+        var endMPos = new Vector(event.clientX, event.clientY);
+        me.position.x = endMPos.x - startMPos.x + startPos.x;
+        me.position.y = endMPos.y - startMPos.y + startPos.y;
+        //console.log("MM",me);
+        return undefined;
+      };
+      var f3 = function(event: any, ui?: any): any {
+        var endMPos = new Vector(event.clientX, event.clientY);
+        me.position.x = endMPos.x - startMPos.x + startPos.x;
+        me.position.y = endMPos.y - startMPos.y + startPos.y;
+        document.body.removeEventListener("mousemove", f2);
+        document.body.removeEventListener("mouseup", f3);
+        //console.log("MU",me);
+        return undefined;
+      }
+      document.body.addEventListener('mouseup', f3);
+      document.body.addEventListener('mousemove', f2);
+
+
+      return undefined;
+    };
+    this.group.addEventListener('mousedown', f);
+
   }
 }
 export { BlockSVG, BlockShape, SquareBlockShape };
