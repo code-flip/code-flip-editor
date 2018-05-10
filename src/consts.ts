@@ -1,0 +1,2 @@
+var Consts={};
+export {Consts}

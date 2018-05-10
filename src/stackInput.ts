@@ -1,6 +1,6 @@
 import { Renderable } from "./renderable";
 import { Rectangle, Vector } from "./utils";
-import { RectBlockShape, BlockSVG } from "./block";
+import { SquareBlockShape, BlockSVG } from "./blockSVG";
 import { InputSVG } from "./input";
 
 class InputStack extends InputSVG {
@@ -45,7 +45,7 @@ class InputStack extends InputSVG {
     }
 
 
-    var bshape = new RectBlockShape(this.bBox.width, this.bBox.height, 12, false, false);
+    var bshape = new SquareBlockShape({ heights: [this.bBox.height-20], tHeight: this.bBox.height, widths: [this.bBox.width], mWidth: this.bBox.width, data: [{prev:false,next:false}] },0,false,false);
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.group.setAttribute("id", "stack-man");

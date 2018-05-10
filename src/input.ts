@@ -1,6 +1,6 @@
 import { Renderable } from "./renderable";
 import { Rectangle, Vector } from "./utils";
-import { RectBlockShape } from "./block";
+import { SquareBlockShape } from "./blockSVG";
 
 class InputSVG implements Renderable {
   group: SVGGElement;
@@ -26,7 +26,7 @@ class InputSVG implements Renderable {
     }
 
     this.bBox = new Rectangle(this.position.x, this.position.y, this.width, 24);
-    var bshape = new RectBlockShape(this.bBox.width, this.bBox.height, 0, false, false);
+    var bshape = new SquareBlockShape({ heights: [this.bBox.height-20], tHeight: this.bBox.height, widths: [this.bBox.width], mWidth: this.bBox.width, data: [{prev:false,next:false}] },0,false,false);
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.shape.setAttribute("fill", this.color);

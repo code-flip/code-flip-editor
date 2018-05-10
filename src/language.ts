@@ -1,4 +1,4 @@
-import { BlockSVG } from "./block";
+import { BlockSVG } from "./blockSVG";
 
 interface Language {
   getBlocks(): Array<BlockSVG>;

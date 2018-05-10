@@ -5,123 +5,6 @@ import { InputStack } from "./stackInput";
 interface BlockShape {
   path(): string;
 }
-class RectBlockShape implements BlockShape {
-  width: number;
-  height: number;
-  radius: number;
-  tabHeight: number = 4;
-  tabWidth: number = 16;
-  tabOffset: number = 8;
-  next: boolean;
-  previous: boolean;
-  path(): string {
-    var m = "M " + this.radius + ",0";
-    if (this.previous) {
-      m = m + "l " + (this.tabOffset) + ",0";
-      m = m + "l " + (this.tabHeight) + "," + (this.tabHeight);
-      m = m + "l " + (this.tabWidth - this.tabHeight * 2) + "," + (0);
-      m = m + "l " + (this.tabHeight) + "," + (-this.tabHeight);
-      m = m + "l " + (this.width - this.radius * 2 - this.tabWidth - this.tabOffset) + ",0";
-    } else {
-      m = m + "l " + (this.width - this.radius * 2) + ",0";
-    }
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + this.radius + "," + this.radius;
-    m = m + "l " + 0 + "," + (this.height - this.radius * 2);
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (-this.radius) + "," + this.radius;
-
-    if (this.next) {
-      m = m + "l " + (-this.width + this.radius * 2 + this.tabWidth + this.tabOffset) + ",0";
-      m = m + "l " + (-this.tabHeight) + "," + (this.tabHeight);
-      m = m + "l " + (-this.tabWidth + this.tabHeight * 2) + "," + (0);
-      m = m + "l " + (-this.tabHeight) + "," + (-this.tabHeight);
-      m = m + "l " + (-this.tabOffset) + ",0";
-    } else {
-      m = m + "l " + (-this.width + this.radius * 2) + "," + 0;
-    }
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (-this.radius) + "," + (-this.radius);
-    m = m + "l " + 0 + "," + (-this.height + this.radius * 2);
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (this.radius) + "," + (-this.radius);
-    return m;
-  };
-  constructor(width: number, height: number, radius: number = 2, next: boolean = true, previous: boolean = true) {
-    this.width = width;
-    this.height = height;
-    this.radius = radius;
-    this.next = next;
-    this.previous = previous;
-  };
-}
-class CoolBlockShape implements BlockShape {
-  layout: { heights: Array<number>, widths: Array<number>, tHeight: number, mWidth: number };
-  radius: number;
-  tabHeight: number = 4;
-  tabWidth: number = 8;
-  tabOffset: number = 12;
-  next: boolean;
-  previous: boolean;
-  reporter: boolean = false;
-  path(): string {
-    var m = "M " + this.radius + ",0";
-    if (this.previous) {
-      m = m + "l " + (this.tabOffset) + ",0";
-      m = m + "l " + (this.tabHeight * 0) + "," + (this.tabHeight);
-      m = m + "l " + (this.tabWidth - this.tabHeight * 2 * 0) + "," + (0);
-      m = m + "l " + (this.tabHeight * 0) + "," + (-this.tabHeight);
-      m = m + "l " + (this.layout.widths[0] - this.radius * 2 - this.tabWidth - this.tabOffset) + ",0";
-    } else {
-      m = m + "l " + (this.layout.widths[0] - this.radius * 2) + ",0";
-    }
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + this.radius + "," + this.radius;
-    m = m + "l " + 0 + "," + (this.layout.heights[0] + 20 - this.radius * 2);
-    var preWidth = this.layout.widths[0];
-    for (var i = 1; i < this.layout.widths.length; i++) {
-      var newWidth = this.layout.widths[i];
-      var nextWidth = i < this.layout.widths.length - 1 ? this.layout.widths[i + 1] : 0;
-      var wDiff = newWidth - preWidth;
-      var wDiff2 = nextWidth - newWidth;
-      if (wDiff > this.radius * 2) {
-        m = m + "a" + this.radius + "," + this.radius + ",0,0,0," + (this.radius) + "," + this.radius;
-        m = m + "l " + ((wDiff - this.radius * 2)) + ",0";
-      } else if (wDiff < -this.radius * 2) {
-        m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (-this.radius) + "," + this.radius;
-        m = m + "l " + ((wDiff + this.radius * 2)) + ",0";
-      } else {
-        m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (-this.radius) + "," + this.radius;
-        m = m + "l " + ((wDiff)) + ",0";
-      }
-      if (wDiff < -this.radius * 2) {
-        m = m + "a" + this.radius + "," + this.radius + ",0,0,0," + (-this.radius) + "," + (this.radius);
-      } else {
-        m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + this.radius + "," + this.radius;
-      }
-      m = m + "l " + 0 + "," + (this.layout.heights[i] + 20 - this.radius * 2);
-      preWidth = newWidth + 0;
-    }
-    //m=m+"H 0";
-    var lastW = this.layout.widths[this.layout.widths.length - 1];
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (-this.radius) + "," + this.radius;
-
-    if (this.next) {
-      m = m + "l " + (-lastW + this.radius * 2 + this.tabWidth + this.tabOffset) + ",0";
-      m = m + "l " + (-this.tabHeight * 0) + "," + (this.tabHeight);
-      m = m + "l " + (-this.tabWidth + this.tabHeight * 2 * 0) + "," + (0);
-      m = m + "l " + (-this.tabHeight * 0) + "," + (-this.tabHeight);
-      m = m + "l " + (-this.tabOffset) + ",0";
-    } else {
-      m = m + "l " + (-lastW + this.radius * 2) + "," + 0;
-    }
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (-this.radius) + "," + (-this.radius);
-    m = m + "l " + 0 + "," + (-this.layout.tHeight + this.radius * 2);
-    m = m + "a" + this.radius + "," + this.radius + ",0,0,1," + (this.radius) + "," + (-this.radius);
-    return m;
-  };
-  constructor(layout: { heights: Array<number>, widths: Array<number>, tHeight: number, mWidth: number }, radius: number = 2, next: boolean = true, previous: boolean = true) {
-    this.layout = layout;
-    this.radius = radius;
-    this.next = next;
-    this.previous = previous;
-  };
-}
 class SquareBlockShape implements BlockShape {
   layout: { heights: Array<number>, widths: Array<number>, tHeight: number, mWidth: number, data: Array<{ prev: boolean, next: boolean }> };
   radius: number;
@@ -225,16 +108,50 @@ class SquareBlockShape implements BlockShape {
 class BlockSVG implements Renderable {
   group: SVGGElement;
   bBox: Rectangle;
-  shapeDark: SVGPathElement;
   shape: SVGPathElement;
-  shapeLight: SVGPathElement;
-  previous: BlockSVG;
-  next: BlockSVG;
+  private _previous: BlockSVG;
+  private _next: BlockSVG;
   inputList: Array<Array<InputSVG>> = [[]];
   canHavePrevious: boolean = false;
   canHaveNext: boolean = false;
   position: Vector = new Vector(0, 0);
   color: string = "hsl(0, 70%, 50%)";
+  get previous(): BlockSVG {
+    return this._previous;
+  }
+  set previous(block: BlockSVG) {
+    if (this._previous && this._previous != block) {
+      var oldStack = this._previous;
+      oldStack.next = undefined;
+      this._previous = block;
+    }
+    if (this._previous) {
+      if (this._previous.next != this) {
+        this._previous.next = this;
+      }
+    }
+  }
+  get next(): BlockSVG {
+    return this._next;
+  }
+  set next(block: BlockSVG) {
+    if (this._next && this._next != block) {
+      var oldStack = this._next;
+      if (this._next.group.parentNode == this.group) {
+        this.group.removeChild(this._next.group);
+      }
+      oldStack._previous = undefined;
+      this._next = block;
+      if (oldStack.group.parentNode == this.group) {
+        this.group.removeChild(oldStack.group);
+      }
+    }
+    if (this._next) {
+      if (this._next.previous != this) {
+        this._next.previous = this;
+      }
+    }
+  }
   toCode(): string {
     return "undefined";
   }
@@ -354,4 +271,4 @@ class BlockSVG implements Renderable {
     this.group.appendChild(this.shape);
   }
 }
-export { BlockSVG, BlockShape, RectBlockShape };
+export { BlockSVG, BlockShape, SquareBlockShape };

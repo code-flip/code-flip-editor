@@ -1,7 +1,7 @@
 import { Renderable } from "./renderable";
 import { CodeFlip } from "./codeFlip";
 import { Rectangle } from "./utils";
-import { BlockSVG } from "./block";
+import { BlockSVG } from "./blockSVG";
 import { InputSVG } from "./input";
 import { InputStack } from "./stackInput";
 import { InputLabel } from "./labelInput";

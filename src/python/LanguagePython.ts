@@ -1,5 +1,5 @@
 import { Language } from "../language";
-import { BlockSVG } from "../block";
+import { BlockSVG } from "../blockSVG";
 import { InputLabel } from "../labelInput";
 import { InputStack } from "../stackInput";
 import { InputBlock } from "../blockInput";
@@ -58,6 +58,30 @@ class LanguagePython implements Language {
     b.inputList = [[new InputLabel("("), new InputBlock(x, b.color), new InputLabel("+"), new InputBlock(y, b.color), new InputLabel(")")]];
     return b;
   }
+  blockMathMultiply(x?: BlockSVG, y?: BlockSVG): BlockSVG {
+    var b = new BlockSVG();
+    b.color = "hsl(210, 100%, 40%)";
+    b.canHaveNext = false;
+    b.canHavePrevious = false;
+    b.inputList = [[new InputLabel("("), new InputBlock(x, b.color), new InputLabel("*"), new InputBlock(y, b.color), new InputLabel(")")]];
+    return b;
+  }
+  blockMathDivide(x?: BlockSVG, y?: BlockSVG): BlockSVG {
+    var b = new BlockSVG();
+    b.color = "hsl(210, 100%, 40%)";
+    b.canHaveNext = false;
+    b.canHavePrevious = false;
+    b.inputList = [[new InputLabel("("), new InputBlock(x, b.color), new InputLabel("/"), new InputBlock(y, b.color), new InputLabel(")")]];
+    return b;
+  }
+  blockMathSubtract(x?: BlockSVG, y?: BlockSVG): BlockSVG {
+    var b = new BlockSVG();
+    b.color = "hsl(210, 100%, 40%)";
+    b.canHaveNext = false;
+    b.canHavePrevious = false;
+    b.inputList = [[new InputLabel("("), new InputBlock(x, b.color), new InputLabel("-"), new InputBlock(y, b.color), new InputLabel(")")]];
+    return b;
+  }
   getBlocks(): BlockSVG[] {
     var blocks: BlockSVG[] = [];
     blocks.push(this.blockIf());
@@ -66,6 +90,9 @@ class LanguagePython implements Language {
     blocks.push(this.blockTrue());
     blocks.push(this.blockPrint());
     blocks.push(this.blockMathAdd());
+    blocks.push(this.blockMathMultiply());
+    blocks.push(this.blockMathDivide());
+    blocks.push(this.blockMathSubtract());
     blocks.push(this.blockIf(this.blockTrue(),this.blockPrint(this.blockFalse())));
     return blocks;
   }
