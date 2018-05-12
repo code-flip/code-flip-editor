@@ -2,6 +2,7 @@ import { Renderable } from "./renderable";
 import { Rectangle, Vector } from "./utils";
 import { InputSVG } from "./input";
 import { InputStack } from "./stackInput";
+import { Connection } from "./connection";
 interface BlockShape {
   path(): string;
 }
@@ -109,51 +110,73 @@ class BlockSVG implements Renderable {
   group: SVGGElement;
   bBox: Rectangle;
   shape: SVGPathElement;
-  private _previous: BlockSVG;
-  private _next: BlockSVG;
+  renderHint: any = undefined;
+  previousConnection: Connection = undefined;
+  nextConnection: Connection = undefined;
+  outputConnection: Connection = undefined;
   inputList: Array<Array<InputSVG>> = [[]];
-  canHavePrevious: boolean = false;
-  canHaveNext: boolean = false;
   position: Vector = new Vector(0, 0);
   color: string = "hsl(0, 70%, 50%)";
   get previous(): BlockSVG {
-    return this._previous;
+    return this.previousConnection ? this.previousConnection.otherBlock : undefined;
+  }
+  get canHaveNext(): boolean {
+    return !(!this.nextConnection);
+  }
+  set canHaveNext(newVal: boolean) {
+    if (this.canHaveNext != newVal) {
+      if (newVal) {
+        this.nextConnection = new Connection(this, new Vector(0, 0));
+        this.nextConnection.addEventListener("disconnect", function(me: Connection, other: Connection) {
+          if (other && other.block) {
+            if (other.block.group.parentNode == this.group) {
+              this.group.removeChild(other.block.group);
+            }
+          }
+        });
+      } else {
+        this.nextConnection.partner = undefined;
+        this.nextConnection = undefined;
+      }
+    }
+  }
+  get canHavePrevious(): boolean {
+    return !(!this.previousConnection);
+  }
+  set canHavePrevious(newVal: boolean) {
+    if (this.canHavePrevious != newVal) {
+      if (newVal) {
+        this.previousConnection = new Connection(this, new Vector(0, 0));
+      } else {
+        this.previousConnection.partner = undefined;
+        this.previousConnection = undefined;
+      }
+    }
+  }
+  get canHaveOutput(): boolean {
+    return !(!this.outputConnection);
+  }
+  set canHaveOutput(newVal: boolean) {
+    if (this.canHaveOutput != newVal) {
+      if (newVal) {
+        this.outputConnection = new Connection(this, new Vector(0, 0));
+      } else {
+        this.outputConnection.partner = undefined;
+        this.outputConnection = undefined;
+      }
+    }
   }
   set previous(block: BlockSVG) {
-    if (this._previous && this._previous != block) {
-      var oldStack = this._previous;
-      oldStack.next = undefined;
-      this._previous = block;
-    } else {
-      this._previous = block;
-    }
-    if (this._previous) {
-      if (this._previous.next != this) {
-        this._previous.next = this;
-      }
+    if (this.previousConnection) {
+      this.previousConnection.partner = block.nextConnection;
     }
   }
   get next(): BlockSVG {
-    return this._next;
+    return this.nextConnection ? this.nextConnection.otherBlock : undefined;
   }
   set next(block: BlockSVG) {
-    if (this._next && this._next != block) {
-      var oldStack = this._next;
-      if (this._next.group.parentNode == this.group) {
-        this.group.removeChild(this._next.group);
-      }
-      oldStack._previous = undefined;
-      this._next = block;
-      if (oldStack.group.parentNode == this.group) {
-        this.group.removeChild(oldStack.group);
-      }
-    } else {
-      this._next = block;
-    }
-    if (this._next) {
-      if (this._next.previous != this) {
-        this._next.previous = this;
-      }
+    if (this.nextConnection) {
+      this.nextConnection.partner = block.previousConnection;
     }
   }
   toCode(): string {
@@ -206,7 +229,7 @@ class BlockSVG implements Renderable {
           if (i === this.inputList.length - 1) {
             widths[i - 1] = Math.max(widths[i - 1], 128);
           }
-          if (!((row[j] as InputStack).stack) || ((row[j] as InputStack).stack as BlockSVG).lastBlock().canHaveNext) {
+          if (!((row[j] as InputStack).stack) || ((row[j] as InputStack).stack as BlockSVG).lastBlock().nextConnection) {
             nStack = true;
             data[i].next = true;
           }
@@ -263,7 +286,7 @@ class BlockSVG implements Renderable {
     }
 
     this.bBox = new Rectangle(this.position.x, this.position.y, 128, layout.tHeight);
-    var bshape = new SquareBlockShape(layout, 0, this.canHaveNext, this.canHavePrevious);
+    var bshape = new SquareBlockShape(layout, 0, !(!this.nextConnection), !(!this.previousConnection));
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.shape.setAttribute("fill", this.color);
