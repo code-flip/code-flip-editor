@@ -3,6 +3,7 @@ import { Rectangle, Vector } from "./utils";
 import { InputSVG } from "./input";
 import { InputStack } from "./stackInput";
 import { Connection } from "./connection";
+import { DefaultBlockRenderer } from "./defaults/DefaultBlockRenderer";
 interface BlockShape {
   path(): string;
 }
@@ -189,84 +190,7 @@ class BlockSVG implements Renderable {
     return this;
   }
   layoutChildren(): { heights: Array<number>, widths: Array<number>, tHeight: number, mWidth: number, data: Array<{ prev: boolean, next: boolean }> } {
-    var cy = 10;
-    var maxWidth = 0;
-    var heights: number[] = [];
-    var widths: number[] = [];
-    var data: { prev: boolean; next: boolean; }[] = [];
-    var stack = false;
-    var nStack = false;
-    for (var i = 0; i < this.inputList.length; i++) {
-      var row = this.inputList[i];
-      var lowX = 48;
-      if (stack) {
-        lowX = 128;
-      }
-      data[i] = { prev: stack && true && nStack, next: false };
-      var cx = 10;
-      var minHeight = 12;
-      var height = minHeight + 0;
-      stack = false;
-      nStack = false;
-      for (var j = 0; j < row.length; j++) {
-
-        if (row[j].type == "InputStack") {
-          lowX = 48;
-          cx = Math.max(cx, lowX);
-          row[j].render(this.group);
-          var bb = row[j].group.getBBox();
-          bb.height = row[j].height();
-          row[j].position.x = cx;
-          row[j].position.y = cy - 10;
-          row[j].render(this.group);
-          //cx += bb.width + 10;
-          height = Math.max(height, bb.height - 20);
-          stack = true;
-
-          if (i > 0) {
-            widths[i - 1] = Math.max(widths[i - 1], 128);
-          }
-          if (i === this.inputList.length - 1) {
-            widths[i - 1] = Math.max(widths[i - 1], 128);
-          }
-          if (!((row[j] as InputStack).stack) || ((row[j] as InputStack).stack as BlockSVG).lastBlock().nextConnection) {
-            nStack = true;
-            data[i].next = true;
-          }
-          data[i - 1].next = true;
-        } else {
-          row[j].render(this.group);
-          var bb = row[j].group.getBBox();
-          bb.height = row[j].height();
-          row[j].position.x = cx;
-          row[j].position.y = cy;
-          cx += bb.width + 10;
-          height = Math.max(height, bb.height);
-        }
-        //row[j].render(this.group);
-      }
-      for (var j = 0; j < row.length; j++) {
-
-        if (row[j].type != "InputStack") {
-          row[j].position.y = cy - row[j].height() / 2 + height / 2;
-          row[j].render(this.group);
-        }
-      }
-
-      heights.push(height);
-      widths.push(Math.max(cx, lowX));
-      maxWidth = Math.max(maxWidth, Math.max(cx, lowX));
-      cy += height + 20;
-      if (i === this.inputList.length - 1 && stack) {
-        widths[i + 1] = 128;
-        heights[i + 1] = 4;
-        cy += 4 + 20;
-        data[i + 1] = { prev: nStack, next: false };
-      }
-
-    }
-
-    return { heights: heights, tHeight: cy - 10, widths: widths, mWidth: maxWidth, data: data };
+    return new DefaultBlockRenderer().renderHint(this);
   }
   layoutNext(): void {
     if (this.next) {
@@ -280,14 +204,17 @@ class BlockSVG implements Renderable {
     return this;
   }
   render(parent: SVGGElement | SVGElement): void {
-    var layout = this.layoutChildren();
+    var engine = new DefaultBlockRenderer();
     if (this.group.parentNode !== parent) {
       parent.appendChild(this.group);
     }
+    var hint = engine.renderHint(this);
 
-    this.bBox = new Rectangle(this.position.x, this.position.y, 128, layout.tHeight);
-    var bshape = new SquareBlockShape(layout, 0, !(!this.nextConnection), !(!this.previousConnection));
-    this.shape.setAttribute("d", bshape.path());
+    this.bBox = new Rectangle(this.position.x, this.position.y, 128, hint.tHeight);
+    //if (!engine.compareHints(this.renderHint, hint)) {
+    this.shape.setAttribute("d", engine.path(hint));
+    this.renderHint = hint;
+    //}
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.shape.setAttribute("fill", this.color);
     this.layoutNext();

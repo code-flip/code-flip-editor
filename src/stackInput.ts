@@ -45,16 +45,17 @@ class InputStack extends InputSVG {
     }
 
 
-    var bshape = new SquareBlockShape({ heights: [this.bBox.height-20], tHeight: this.bBox.height, widths: [this.bBox.width], mWidth: this.bBox.width, data: [{prev:false,next:false}] },0,false,false);
+    var bshape = new SquareBlockShape({ heights: [this.bBox.height - 20], tHeight: this.bBox.height, widths: [this.bBox.width], mWidth: this.bBox.width, data: [{ prev: false, next: false }] }, 0, false, false);
     this.shape.setAttribute("d", bshape.path());
     this.group.setAttribute("transform", "translate(" + this.position.x + " " + this.position.y + ")");
     this.group.setAttribute("id", "stack-man");
     this.shape.setAttribute("fill", "transparent");//this.color);
     if (this.stack) {
+      this.stack.position = new Vector(0, 0);
       this.stack.render(this.group);
     }
   }
-  constructor(stack?:BlockSVG) {
+  constructor(stack?: BlockSVG) {
     super();
     this.stack = stack;
     //this.stack.canHaveNext = true;

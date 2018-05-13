@@ -51,6 +51,7 @@ class InputBlock extends InputSVG {
     this.group.setAttribute("id", "stack-man");
     this.shape.setAttribute("fill", this.color);
     if (this.stack) {
+      this.stack.position = new Vector(0, 0);
       this.stack.render(this.group);
     }
   }
